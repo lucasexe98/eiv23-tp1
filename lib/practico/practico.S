@@ -38,7 +38,7 @@
 defun suma
     push {r4-r11,lr}
     // Insertar código a continuación
-
+    ADD R0,R1
     // Retorno, antes R0 debe tener el valor correcto
     pop {r4-r11,pc}
 endfun suma
@@ -55,12 +55,29 @@ endfun suma
  *             entero de 32 bit con signo.
  * Salida
  *  R1:R0 : Sumatoria, entero de 64 bit con signo 
+ *  R3:R2 : Resultado de sumatoria, parte alta y baja
  */
 defun sumatoria
     push {r4-r11,lr}
     // Insertar código a continuación
+    MOV R2, #0                  // Parte baja del resultado
+    MOV R3, #0                  // Parte alta del resultado
+    MOV R12, R0                 // Pasamos la cantidad de numeros a leer a R12
+    Loop:
+    CMP R12, #0                 // Compara 
+    BEQ salida                  // Igual 
+    
+    LDR R4, [R1, R0, LSL #2]    // Carga dato de 32bits del primer numero al que apunta R1
+    ADD R2, R4                  // Suma el nuevo valor a la sumatoria
+    LSL R5, R2, #31             // Devuelve el bit de signo 
+    MOV R3, R5                  // Paso el bit de signo a la parte alta del resultado R3
+   // ADC R3, R4                  // Solo suma si hay acarreo(?)
+    //LSL R1, R1, #2
+    SUB R12, R12, #1              // Actualizo la cantidad de numeros restantes
 
-    // Retorno, antes R1:R0 debe tener el valor correcto
+    BNE Loop
+    salida: 
+    BX LR                    
     pop {r4-r11,pc}
 endfun sumatoria
 
