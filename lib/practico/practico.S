@@ -63,21 +63,29 @@ defun sumatoria
     MOV R2, #0                  // Parte baja del resultado
     MOV R3, #0                  // Parte alta del resultado
     MOV R12, R0                 // Pasamos la cantidad de numeros a leer a R12
+    SUB R12, #1
     Loop:
     CMP R12, #0                 // Compara 
-    BEQ salida                  // Igual 
+    BLT salida                  // Igual 
     
-    LDR R4, [R1, R0, LSL #2]    // Carga dato de 32bits del primer numero al que apunta R1
-    ADD R2, R4                  // Suma el nuevo valor a la sumatoria
-    LSL R5, R2, #31             // Devuelve el bit de signo 
-    MOV R3, R5                  // Paso el bit de signo a la parte alta del resultado R3
-   // ADC R3, R4                  // Solo suma si hay acarreo(?)
-    //LSL R1, R1, #2
-    SUB R12, R12, #1              // Actualizo la cantidad de numeros restantes
+    LDR R4, [R1, R12, LSL #2]   // Carga dato de 32bits del primer numero al que apunta R1
+                      
+    CMP R4, #0                  // Paso el bit de signo a la parte alta del resultado R3
+    BGE posi
+    ADD R3, 0xFFFFFFFF          // Extiendo el numero que leo a 64 bits. Pasando el signo negativo
+    posi:
+        ADDS R2, R4
+        ADC R3, #0 
+        SUB R12, #1
 
-    BNE Loop
-    salida: 
-    BX LR                    
+    BAL Loop
+    salida:
+    MOV R1, R3
+    MOV R0, R2
+
+
+    
+                  
     pop {r4-r11,pc}
 endfun sumatoria
 
