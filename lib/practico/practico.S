@@ -99,6 +99,25 @@ endfun sumatoria
 defun posicion_maximo
     push {r4-r11,lr}
     // Insertar código a continuación
+    MOV R4, #0
+    CMP R0, #1
+    BLE Retorno
+    LDR R6,[R1]
+    MOV R7, #1
+    0:
+    CMP R7, R0
+    BGE Retorno
+    LDR R8, [R1, R7, LSL #2]
+    CMP R6, R8
+    BGE 1f
+    MOV R6, R8
+    MOV R4, R7
+    1:
+    ADD R7, #1
+    BAL 0b
+    Retorno:
+    MOV R0, R4
+
     // Retorno, antes R0 debe tener el valor correcto
     pop {r4-r11,pc}
 endfun posicion_maximo
@@ -122,8 +141,20 @@ endfun posicion_maximo
  */
 defun ordenar_en_sitio_menor_a_mayor
     push {r4-r11,lr}
-    // Insertar código a continuación
-
-    // Retorno
+    MOV R6, R1
+    SUB R4, R0, #1
+    0:
+    CMP R4, #0
+    BLE Fin
+    ADD R0, R4, #1
+    MOV R1, R6
+    BL posicion_maximo
+    LDR R5,[R6,R4,LSL #2]
+    LDR R7,[R6,R0,LSL #2]
+    STR R7,[R6,R4,LSL #2]
+    STR R5,[R6,R0,LSL #2]
+    SUB R4, #1
+    BAL 0b
+    Fin:
     pop {r4-r11,pc}
 endfun ordenar_en_sitio_menor_a_mayor
