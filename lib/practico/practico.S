@@ -59,33 +59,27 @@ endfun suma
  */
 defun sumatoria
     push {r4-r11,lr}
-    // Insertar código a continuación
-    MOV R2, #0                  // Parte baja del resultado
-    MOV R3, #0                  // Parte alta del resultado
-    MOV R12, R0                 // Pasamos la cantidad de numeros a leer a R12
-    SUB R12, #1
-    Loop:
-    CMP R12, #0                 // Compara 
-    BLT salida                  // Igual 
+    MOV R2,#0
+    MOV R3,#0
+    MOV R4,#0
+
+    0:
+    CMP R4,R0
+    BGE 1f
+
+    LDR R5, [R1, R4, LSL #2]
+    ASR R6,R5,#31
+
+    ADDS R2,R5
+    ADC R3,R6
     
-    LDR R4, [R1, R12, LSL #2]   // Carga dato de 32bits del primer numero al que apunta R1
-                      
-    CMP R4, #0                  // Paso el bit de signo a la parte alta del resultado R3
-    BGE posi
-    ADD R3, 0xFFFFFFFF          // Extiendo el numero que leo a 64 bits. Pasando el signo negativo
-    posi:
-        ADDS R2, R4
-        ADC R3, #0 
-        SUB R12, #1
+    ADD R4,#1
 
-    BAL Loop
-    salida:
-    MOV R1, R3
-    MOV R0, R2
-
-
+    B 0b
     
-                  
+    1:
+    MOV R1,R3
+    MOV R0,R2
     pop {r4-r11,pc}
 endfun sumatoria
 
@@ -105,7 +99,6 @@ endfun sumatoria
 defun posicion_maximo
     push {r4-r11,lr}
     // Insertar código a continuación
-
     // Retorno, antes R0 debe tener el valor correcto
     pop {r4-r11,pc}
 endfun posicion_maximo
